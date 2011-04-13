@@ -88,7 +88,7 @@ end
 # Make a connection for bucket deletion
 log = Logger.new(STDOUT)
 log.level = Logger::ERROR
-mains3 = RightAws::S3Interface.new(access_key, secret_key, :multi_thread => true, :port => 80, :protocol => 'http', :logger => log)
+mains3 = RightAws::S3Interface.new(access_key, secret_key, :multi_thread => true, :port => 80, :protocol => 'http', :logger => log ,  :server => "s3-eu-west-1.amazonaws.com")
 begin
   mains3.list_all_my_buckets  # Confirm credentials
 rescue RightAws::AwsError => e
@@ -113,7 +113,7 @@ buckets.each do |bucket|
   threads << Thread.new do
     Thread.current[:number] = "CATALOG"
     puts "Starting catalog thread..."
-    s3 = RightAws::S3Interface.new(access_key, secret_key, :multi_thread => true, :port => 80, :protocol => 'http', :logger => log)
+    s3 = RightAws::S3Interface.new(access_key, secret_key, :multi_thread => true, :port => 80, :protocol => 'http', :logger => log,  :server => "s3-eu-west-1.amazonaws.com")
     prefix = ''
     begin
       while queue.length > max_queue
@@ -135,7 +135,7 @@ buckets.each do |bucket|
     threads << Thread.new(count) do |number|
       Thread.current[:number] = number
       puts "Starting deletion thread #{number}..."
-      s3 = RightAws::S3Interface.new(access_key, secret_key, :multi_thread => true, :port => 80, :protocol => 'http', :logger => log)
+      s3 = RightAws::S3Interface.new(access_key, secret_key, :multi_thread => true, :port => 80, :protocol => 'http', :logger => log,  :server => "s3-eu-west-1.amazonaws.com")
       begin
         key = queue.deq
         unless key == :END_OF_BUCKET
